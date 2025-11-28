@@ -19,19 +19,19 @@
 
 ```mermaid
 graph LR
-    User[Client / Robot] -->|HTTPS (REST API)| CloudRun[GCP Cloud Run Gateway]
-    CloudRun -->|Tailscale VPN Tunnel| HomeNIC[Home Server (RTX 3090)]
+    User["Client / Robot"] -- "HTTPS (REST API)" --> CloudRun["GCP Cloud Run Gateway"]
+    CloudRun -- "Tailscale Tunnel / MTU 1280" --> HomeNIC["Home Server (RTX 3090)"]
     
     subgraph "On-Premise Infrastructure"
-        HomeNIC -->|Ingress| K3s[K3s Cluster]
-        K3s -->|vLLM Service| Pod[vLLM Engine]
-        Pod -->|Time-Slicing| GPU[NVIDIA RTX 3090]
+        HomeNIC -- "Ingress" --> K3s["K3s Cluster"]
+        K3s -- "vLLM Service" --> Pod["vLLM Engine"]
+        Pod -- "Time-Slicing" --> GPU["NVIDIA RTX 3090"]
     end
 ```
 
 -----
 
-## Tech Stack & Decision
+## Tech Stack
 
 | Component | Technology | Reason for Selection |
 | :--- | :--- | :--- |
