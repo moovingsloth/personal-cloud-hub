@@ -1,0 +1,12 @@
+{
+    debug
+}
+
+:8080 {
+    log
+    # socat이 열어둔 로컬 포트로 토스
+    reverse_proxy 127.0.0.1:8081 {
+        header_up Host 100.83.129.75
+        flush_interval -1
+    }
+}

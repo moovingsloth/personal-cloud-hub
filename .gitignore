@@ -1,0 +1,8 @@
+authkey.txt
+.env
+*.log
+.DS_Store
+start.sh
+test/update_k3s_ip.sh
+/copy
+/backup

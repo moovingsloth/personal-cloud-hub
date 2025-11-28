@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vllm-qwen
+  labels:
+    app: vllm-qwen
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vllm-qwen
+  template:
+    metadata:
+      labels:
+        app: vllm-qwen
+    spec:
+      containers:
+      - name: vllm
+        image: vllm/vllm-openai:latest
+        # Qwen2.5-VL-7B 모델 실행 명령
+        command: ["vllm", "serve", "Qwen/Qwen2.5-VL-7B-Instruct"]
+        args:
+          - "--dtype=half"               # FP16 사용 (메모리 절약)
+          - "--gpu-memory-utilization=0.80" # GPU 메모리의 80% 사용
+          - "--max-model-len=4096"       # 긴 컨텍스트(이미지 분석) 지원
+          - "--trust-remote-code"        # Qwen 모델 필수 옵션
+        ports:
+        - containerPort: 8000
+        resources:
+          limits:
+            nvidia.com/gpu: 1  # GPU 10개 중 1개 슬롯 사용
+        volumeMounts:
+        - mountPath: /root/.cache/huggingface
+          name: model-cache
+        - mountPath: /dev/shm
+          name: dshm
+      volumes:
+      # [중요] 호스트의 폴더를 공유하여 모델 다운로드 캐시 유지
+      - name: model-cache
+        hostPath:
+          path: /var/lib/k3s/storage/huggingface
+          type: DirectoryOrCreate
+      # PyTorch 공유 메모리 문제 해결용
+      - name: dshm
+        emptyDir:
+          medium: Memory
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vllm-service
+spec:
+  selector:
+    app: vllm-qwen
+  ports:
+  - protocol: TCP
+    port: 80        # 서비스 포트 (Ingress가 여기로 보냄)
+    targetPort: 8000 # vLLM 컨테이너 포트
