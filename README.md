@@ -15,18 +15,43 @@
 
 ## Architecture
 
-[Image of Cloud Robotics Architecture with Edge and Cloud]
 
 ```mermaid
-graph LR
-    User["Client / Robot"] -- "HTTPS (REST API)" --> CloudRun["GCP Cloud Run Gateway"]
-    CloudRun -- "Tailscale Tunnel / MTU 1280" --> HomeNIC["Home Server (RTX 3090)"]
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#ffcc00', 'edgeLabelBackground':'#ffffff', 'tertiaryColor': '#f4f4f4'}}}%%
+graph TD
+    %% 스타일 정의
+    classDef user fill:#FF9F43,stroke:#333,stroke-width:2px,color:white,rx:10,ry:10;
+    classDef gcp fill:#4285F4,stroke:#333,stroke-width:2px,color:white,rx:5,ry:5;
+    classDef home fill:#2E86AB,stroke:#333,stroke-width:2px,color:white,rx:5,ry:5;
+    classDef k8s fill:#326CE5,stroke:#333,stroke-width:2px,color:white,rx:5,ry:5;
+    classDef gpu fill:#76B900,stroke:#333,stroke-width:4px,color:white,rx:5,ry:5,stroke-dasharray: 5 5;
+
+    %% 노드 정의
+    User["👤 User / Robot<br>(Client)"]:::user
     
-    subgraph "On-Premise Infrastructure"
-        HomeNIC -- "Ingress" --> K3s["K3s Cluster"]
-        K3s -- "vLLM Service" --> Pod["vLLM Engine"]
-        Pod -- "Time-Slicing" --> GPU["NVIDIA RTX 3090"]
+    subgraph Cloud["☁️ Google Cloud Platform"]
+        CloudRun["🚀 Cloud Run Gateway<br>(Caddy + Tailscale)"]:::gcp
     end
+
+    subgraph Home["🏠 Home Network (On-Premise)"]
+        HomeNIC["🔌 Server NIC<br>(Tailscale Interface)"]:::home
+        
+        subgraph Cluster["☸️ K3s Kubernetes Cluster"]
+            Ingress["🚪 Ingress<br>(Traefik Controller)"]:::k8s
+            Service["🔀 vLLM Service"]:::k8s
+            Pod["🧠 vLLM Pod<br>(Qwen2.5-VL)"]:::k8s
+        end
+        
+        GPU["⚡ NVIDIA RTX 3090<br>(Time-Slicing: 1/10)"]:::gpu
+    end
+
+    %% 연결
+    User ==>|HTTPS Request| CloudRun
+    CloudRun ==>|Secure VPN Tunnel| HomeNIC
+    HomeNIC -->|Port 80| Ingress
+    Ingress -->|Routing| Service
+    Service -->|Select Pod| Pod
+    Pod -.->|CUDA Ops| GPU
 ```
 
 -----
