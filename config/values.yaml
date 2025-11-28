@@ -1,0 +1,15 @@
+config:
+  default: "sharing-config"
+  map:
+    sharing-config: |-
+      version: v1
+      sharing:
+        timeSlicing:
+          resources:
+          - name: nvidia.com/gpu
+            replicas: 10
+devicePlugin:
+    kubeletDir: /var/lib/rancher/k3s/agent/kubelet
+
+gfd:
+  enabled: true
