@@ -1,6 +1,6 @@
 # Hybrid Cloud AI Server (RTX 3090 + GCP)
 
-> **Low-Cost, Unlimited AI API Server powered by Home GPU** \> 집에서 잠자고 있는 RTX 3090을 GCP Cloud Run과 Tailscale로 연결하여, 전 세계 어디서든 접속 가능한 API 서버로 구축했습니다.
+> **Low-Cost, Unlimited AI API Server powered by Home GPU** \> 로컬 GPU(RTX 3090)를 GCP Cloud Run과 Tailscale로 연결하여, 전 세계 어디서든 접속 가능한 API 서버로 구축했습니다.
 
 ## Overview
 
