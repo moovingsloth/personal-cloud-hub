@@ -2,6 +2,10 @@
     debug
 }
 
+:80 {
+    reverse_proxy client-web-service:80
+}
+
 :8080 {
     log
     # socat이 열어둔 로컬 포트로 토스

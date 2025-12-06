@@ -17,12 +17,12 @@ try:
             {
                 "role": "user",
                 "content": [
-                    {"type": "text", "text": "What color is this?"},
+                    {"type": "text", "text": "이 사진의 색깔이 뭐야?"},
                     {"type": "image_url", "image_url": {"url": f"data:image/png;base64,{TINY_IMAGE}"}},
                 ],
             }
         ],
-        max_tokens=10,
+        max_tokens=100,
     )
     print(f"✅ 성공! 응답: {response.choices[0].message.content}")
 

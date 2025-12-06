@@ -17,9 +17,9 @@ print("🤖 Qwen2.5-VL에게 질문하는 중...")
 response = client.chat.completions.create(
     model="Qwen/Qwen2.5-VL-7B-Instruct",
     messages=[
-        {"role": "user", "content": "경희대학교에 대해 소개해줘"}
+        {"role": "user", "content": "경희대학교의 최신 소식을 알려줘"}
     ],
-    max_tokens=50
+    max_tokens=500
 )
 
 print(f"🧠 응답: {response.choices[0].message.content}")
